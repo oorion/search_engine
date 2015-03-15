@@ -28,21 +28,35 @@ class Api::V1::ArticlesControllerTest < ActionController::TestCase
     assert_equal Article.first.description, search_results.first["description"]
   end
 
-  test "user can access index if authenticated" do
+  # test "user can access index if authenticated" do
+  #
+  #   FactoryGirl.create(:article)
+  #   user = User.create(email: 'test@example.com', password: 'password')
+  #
+  #   stub_request(:get, "user:pass@localhost:3000")
+  #   Net::HTTP.start('localhost:3000') do |http|
+  #     req = Net::HTTP::Get.new('/')
+  #     req.basic_auth 'test@example.com', 'password'
+  #     http.request(req)
+  #   end
+  #   binding.pry
+  #   articles = JSON.parse(response.body)
+  #
+  #   #get :index, { email: 'test@example.com', password: 'password', format: :json }
+  #   assert_equal 200, response.status
+  #   assert page.has_content?(articles.first["title"])
+  # end
+
+  test "user with token can access index if authenticated" do
     skip
     FactoryGirl.create(:article)
     user = User.create(email: 'test@example.com', password: 'password')
+    token = ApiKey.create(token: "catshow")
 
-    stub_request(:get, "user:pass@localhost:3000")
-    Net::HTTP.start('localhost:3000') do |http|
-      req = Net::HTTP::Get.new('/')
-      req.basic_auth 'test@example.com', 'password'
-      http.request(req)
-    end
-    binding.pry
+    # get :index, { token: token, format: :json }
+    get :index, nil, { "HTTP_AUTHORIZATION" => "ApiKey token=catshow" }
     articles = JSON.parse(response.body)
 
-    #get :index, { email: 'test@example.com', password: 'password', format: :json }
     assert_equal 200, response.status
     assert page.has_content?(articles.first["title"])
   end
@@ -52,6 +66,6 @@ class Api::V1::ArticlesControllerTest < ActionController::TestCase
     get :index, { format: :json }
 
     assert_equal 401, response.status
-    assert_includes response.body, "HTTP Basic: Access denied.\n"
+    assert_includes response.body, "HTTP Token: Access denied.\n"
   end
 end

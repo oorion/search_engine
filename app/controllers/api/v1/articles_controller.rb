@@ -26,9 +26,12 @@ class Api::V1::ArticlesController < ApplicationController
   private
 
   def authenticate
-    authenticate_or_request_with_http_basic("Please authenticate with api") do |email, password|
-      user = User.find_by(email: email)
-      user.authenticate(password)
+    # authenticate_or_request_with_http_basic("Please authenticate with api") do |email, password|
+    #   user = User.find_by(email: email)
+    #   user.authenticate(password)
+    # end
+    authenticate_or_request_with_http_token do |token, options|
+      ApiKey.exists?(token: token)
     end
   end
 end
