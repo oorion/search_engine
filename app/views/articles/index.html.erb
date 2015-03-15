@@ -1,0 +1,10 @@
+<%= form_tag article_search_path do %>
+  <%= search_field_tag :search %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<ul>
+  <% @articles.each do |article| %>
+    <li><%= link_to article.title, article_path(article.id) %></li>
+  <% end %>
+</ul>
